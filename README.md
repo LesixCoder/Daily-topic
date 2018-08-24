@@ -2,6 +2,8 @@
 
 前端每日一题收集
 
+> TOPIC 1
+
 ```js
 var yidengarr = [0, 1, 2];
 yidengarr[10] = 10;
@@ -15,6 +17,8 @@ yidengarr.filter(function(x) {
 // C.[]
 // D.报错
 ```
+
+> TOPIC 2
 
 ```html
 <textarea id="yideng" maxlength="10"></textarea>
