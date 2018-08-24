@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>topic1</title>
+</head>
+<body>
+  <script>
+    var yidengarr = [0, 1, 2];
+    yidengarr[10] = 10;
+    yidengarr.filter(function(x) {
+      return x === undefined;
+    })
+
+    // ===== 请选择如下答案 =====
+    // A.[undefined*7]
+    // B.[empty*7]
+    // C.[]
+    // D.报错
+  </script>
+  <script>
+    // 选择C
+    // 首先大家可以看一下 Array.prototype.filter 的 polyfill，filter迭代这个数组的时候, 首先检查了这个索引值是不是数组的一个属性, 那么我们测试一下.
+    // 0 in ary; => true
+    // 3 in ary; => false
+    // 10 in ary; => true
+    // 也就是说 从 3 - 9 都是没有初始化的'坑'!, 这些索引并不存在与数组中. 在 array 的函数调用的时候是会跳过这些'坑'的.
+  </script>
+</body>
+</html>
