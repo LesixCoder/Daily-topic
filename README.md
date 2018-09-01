@@ -2,8 +2,8 @@
 
 前端每日一题收集
 
-> **TOPIC 1**
->
+**TOPIC 1**
+
 > 18/08/22
 
 ```js
@@ -31,7 +31,7 @@ yidengarr.filter(function(x) {
 // 也就是说 从 3 - 9 都是没有初始化的'坑'!, 这些索引并不存在与数组中. 在 array 的函数调用的时候是会跳过这些'坑'的.
 ```
 
-> **TOPIC 2**
+**TOPIC 2**
 
 ```html
 <textarea id="yideng" maxlength="10"></textarea>
@@ -42,8 +42,8 @@ yidengarr.filter(function(x) {
 <!-- textarea文本框展示的内容是什么，为什么？ -->
 ```
 
-> **TOPIC 3**
->
+**TOPIC 3**
+
 > 18/08/23
 
 ```js
@@ -65,8 +65,8 @@ alert([,,].length);
 
 ![](http://cdn-blog.liusixin.cn/topic3.jpg)
 
-> **TOPIC 4**
->
+**TOPIC 4**
+
 > 18/08/24
 
 ```js
@@ -93,8 +93,8 @@ f()()
 // 还有try..catch等等 js底层学不会 一辈子工资也过不了20.
 ```
 
-> **TOPIC 5**
->
+**TOPIC 5**
+
 > 18/08/27
 
 ```js
@@ -117,8 +117,8 @@ new f() instanceof f;
 
 于是，我们这里的 `new f()` 返回的仍然是函数 `f` 本身，而并非他的实例。
 
-> **TOPIC 6**
->
+**TOPIC 6**
+
 > 18/08/28
 
 ```js
@@ -137,8 +137,8 @@ console.log(yideng.a);
 
 答案是a，构造函数 `Person` 创建的时候系统会默认一个它的原型对象，`Person` 的原型对象也是个对象，用`Person.prototype.constructor`打印，构造器指向的是`Object`，既然`Object`是一个构造函数那自然也有原型对象并设置了属于`a`，当`person`创建一个实例`yideng`，访问它的`a`属性，先找自己没有会顺着原型链往上找，找到person没有会再找`object`，然后就有啦
 
-> **TOPIC 7**
->
+**TOPIC 7**
+
 > 18/08/29
 
 ```js
@@ -161,8 +161,8 @@ console.log(yideng.x);
 3. 刚才创建的`x`属性被赋值为`{n:2}`
 4. 由于`yideng`的指向已经改变，不再指向原有的对象，所以`yideng.x`就为`undefined`。
 
-> **TOPIC 8**
->
+**TOPIC 8**
+
 > 18/08/30
 
 ```html
@@ -191,8 +191,8 @@ console.log(yideng.x);
 2. 当任务执行过程中出现异常，且异常没有捕获处理，则会一直沿着调用栈一层层向外抛出，最终终止当前任务的执行。
 3. JS 线程会继续从任务队列中提取下一个任务继续执行。
 
-> **TOPIC 9**
->
+**TOPIC 9**
+
 > 18/08/31
 
 ```js
