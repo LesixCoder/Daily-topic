@@ -364,18 +364,362 @@ function level(score) {
 ```js
 var length = 10;
 function fn() {
-    console.log(this.length);
+  console.log(this.length);
 }
 var obj = {
-    length: 5,
-    method: function (fn) {
-        fn();
-        arguments[0]();
-    },
+  length: 5,
+  method: function(fn) {
+    fn();
+    arguments[0]();
+  },
 };
 obj.method(fn, 1);
 
 // 10
 // 2
 // 全局函数fn指向的是window，fn同时也属于arguments数组中的一员，即当作为arguments成员之一调用的时候，其作用域就绑定到了arguments上，this也就是指向了arguments对象，所以arguments[0]()这段代码调用了身为成员的fn()函数
+```
+
+**TOPIC 18**
+
+写出 JavaScript 面向对象编程的混合式继承。并写出 ES6 版本的继承
+
+```js
+// es5继承
+function Car(color) {
+  this.color = color;
+}
+Car.prototype.show = function() {
+  console.log(this.color);
+};
+function BMW(color) {
+  Car.call(this, color);
+}
+const __prototype = Object.create(Car.prototype);
+__prototype.constructor = BMW;
+BMW.prototype = __prototype;
+const bmw = new BMW();
+console.log(bmw);
+
+// es6继承
+class Car {
+  constructor(color) {
+    this.color = color;
+  }
+  show() {
+    console.log(this.color);
+  }
+}
+class BMW extends Car {
+  constructor(color) {
+    super(color);
+    super.xx = '123';
+  }
+  test() {
+    console.log();
+  }
+}
+const car = new Car();
+const bmw = new BMW('red');
+
+// super作为函数调用时，代表父类的构造函数
+// super作为对象时，在普通方法中，指向父类的原型对象；在静态方法中，指向父类。
+// 在子类普通方法中通过super调用父类的方法时，方法内部的this指向当前的子类实例。
+// 另外，在子类的静态方法中通过super调用父类的方法时，方法内部的this指向当前的子类，而不是子类的实例。
+```
+
+**TOPIC 19**
+
+```js
+var obj = {
+  baz: 1,
+  bar: function() {
+    return this.baz;
+  },
+};
+(function() {
+  console.log(typeof arguments[0]());
+})(obj.bar);
+
+// undefined
+// arguments[0]() 是arguments这个对象调用的，arguments下没有baz属性
+```
+
+**TOPIC 20**
+
+```js
+function f() {
+  return f;
+}
+new f() instanceof f;
+// false
+// 构造函数不需要显式声明返回值，默认返回this值。当显式声明了返回值时，如果返回值是非对象（数字、字符串等），这个返回值会被忽略，继续返回this值。但是如果返回值是对象，那么这个显式返回值会被返回。因为 f() 内部返回了自己，故此时 new f() 的结果和 f 相等。
+```
+
+**TOPIC 21**
+
+```js
+with (function(x, undefined) {}) length;
+// 2
+// with 限定了作用域是这个函数，function.length 返回函数的参数个数，所以是 2。
+// undefined 虽然是关键词，但可以被覆写。但 null 不能。
+```
+
+**TOPIC 22**
+
+```js
+(function(x) {
+  delete x;
+  return x;
+})(1);
+
+// 1
+// 函数参数不允许被删除
+```
+
+**TOPIC 23**
+
+```js
+var x = 1;
+if (function f() {}) {
+  x += typeof f;
+}
+x;
+
+// "1undefined"
+// 括号内的 function f(){} 不是函数声明，会被转换成 true ，因此 f 未定义。
+```
+
+**TOPIC 24**
+
+```js
+function f() {
+  return f;
+}
+new f() instanceof f;
+// false
+// 使用new操作符时，若调用的函数返回的是一个对象，则相当于这个new操作符一点用也没有。函数f返回的是自身，即一个对象
+```
+
+**TOPIC 25**
+
+```js
+var arr = [0];
+if (arr) {
+  console.log(arr == true);
+} else {
+  console.log('test');
+}
+// false
+// arr == true 会首先把arr.toString()转为“0”，“0” == true转为 0 == 1，所以为false;
+```
+
+**TOPIC 26**
+
+```js
+const timeout = ms =>
+  new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve();
+    }, ms);
+  });
+const ajax1 = () =>
+  timeout(2000).then(() => {
+    console.log('1');
+    return 1;
+  });
+const ajax2 = () =>
+  timeout(1000).then(() => {
+    console.log('2');
+    return 2;
+  });
+const ajax3 = () =>
+  timeout(2000).then(() => {
+    console.log('3');
+    return 3;
+  });
+
+const mergePromise = ajaxArray => {
+  // 编写方法能返回如下结果
+  // 1,2,3 done [1,2,3]
+};
+
+mergePromise([ajax1, ajax2, ajax3]).then(data => {
+  console.log('done');
+  console.log(data);
+});
+```
+
+```js
+// 方法一
+const mergePromise = ajaxArray => {
+  // 1,2,3 done [1,2,3]
+  let result = [];
+  async function asyncForEach() {
+    for (let item of ajaxArray) {
+      result.push(await item());
+    }
+    return result;
+  }
+  return asyncForEach();
+};
+```
+
+```js
+// 方法二
+const mergePromise = ajaxArray => {
+  //1,2,3 done [1,2,3]
+  var arr = [],
+    ajaxLength = ajaxArray.length;
+  for (var i = 0; i < ajaxLength; i++) {
+    ajaxArray[i].next = ajaxArray[i + 1];
+  }
+
+  function todo(item) {
+    item().then(data => {
+      arr.push(data);
+      var _next = item.next;
+      _next && todo(_next);
+    });
+  }
+  todo.then = data => {
+    ajaxArray[ajaxLength - 1].next = () =>
+      timeout(0).then(() => {
+        data(arr);
+      });
+    todo(ajaxArray[0]);
+  };
+  return todo;
+};
+```
+
+**TOPIC 27**
+
+请写出执行结果
+
+```js
+[1 < 2 < 3, 3 < 2 < 1];
+// [true, true]
+// js执行结果从左往右执行，3<2 为 false，false<1转化为0<1,所以为true
+```
+
+**TOPIC 28**
+
+```js
+var length = 10;
+function fn() {
+  console.log(this.length);
+}
+var obj = {
+  length: 5,
+  method: function() {
+    fn();
+    arguments[0]();
+  },
+};
+obj.method(fn, 1);
+// 10
+// 2
+// fn和1是arguments对象中的一员，所以this.length = arguments.length
+```
+
+**TOPIC 29**
+
+```js
+for (
+  let i = (setTimeout(() => console.log('a->', i)), 0);
+  setTimeout(() => console.log('b->', i)), i < 2;
+  i++
+) {
+  i++;
+}
+// a-> 0
+// b-> 1
+// b-> 2
+```
+
+**TOPIC 30**
+
+```js
+[typeof null, null instanceof Object]
+// ['object', false]
+// 对于Null类型的值（只有null），规范就是定义返回"object"这个字符串。但是本质上Null和Object不是一个数据类型，null值并不是以Object为原型创建出来的。
+```
+
+**TOPIC 31**
+
+```js
+function sidEffecting(ary) {
+    ary[0] = ary[2];
+}
+function test(a, b, c = 3) {
+    c = 10;
+    sidEffecting(arguments);
+    return a + b + c;
+}
+test(1,1,1);
+// 12
+// 使用了参数默认赋值表示es6语法，会默认使用严格模式，严格模式下的arguments参数不可以改变，如果没有严格模式，会正常输出21。
+```
+
+**TOPIC 32**
+
+```js
+test();
+var flag = true;
+if (flag) {
+    function test() {
+        console.log('test1');
+    }
+} else {
+    function test() {
+        console.log('test2');
+    }
+}
+// Uncaught TypeError: test is not a function
+// 在if条件语句内，函数声明相当于函数表达式，test被声明但未赋值
+```
+
+**TOPIC 33**
+
+```js
+function test(a, b, c) {
+    console.log(this.length);
+    console.log(this.callee.length);
+}
+function fn(d) {
+    arguments[0](10, 20, 30, 40, 50);
+}
+fn(test, 10, 20, 30);
+// 4
+// 1
+// this指向的是调用者，为arguments，callue指向调用函数，为fn。
+```
+
+**TOPIC 34**
+
+```js
+console.log({} + []);
+{} + [];
+
+// [object Object]
+// 0
+// 根据语句优先原则  {}被理解为复合语句块，因此相当于 {}; +[]   。[]为空，结果为0
+// console.log({}+[]) : js把()中的语句当做一个表达式，因此{}不能被理解为语句块，而被理解为"[object Object]" + ""，console.log("[object Object]"+"")打印结果为[object Object]。
+```
+
+**TOPIC 35**
+
+```js
+let a = 0;
+let test = async () => {
+    a = a + await 10;
+    console.log(a);
+}
+test();
+console.log(a++);
+// 0
+// 10
+// 执行test函数此时 `a = a+await 10` 等价于 `a = a + await Promise.resolve(10)`，表达式右边在求值的时候遇到了await，所以这个时候a已经求值了，也就是说上面的函数等价于 `a = 0 + await Promise.resolve(10)`。这里还有一点需要注意的是Promise只有then和catch里面的是真正异步执行的，`new Promise(resolve=>{console.log(123)})` 这种事直接同步执行的，而这里的Promise.resolve(10)也是同步执行的。
+// await后面的语句并不是放到micro去执行的，而是直接同步执行的。也就是说await并不直接将后面要执行的代码放到microTask中，await只是等待microTask执行完才把await后面的表达式求值结果返回给左值。
 ```
