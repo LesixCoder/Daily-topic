@@ -10,10 +10,6 @@
  * 输出: 2
  */
 
-/**
- * @param {number[]} nums
- * @return {number}
- */
 var majorityElement = function (nums) {
   var map = {}
   for (var i = 0; i < nums.length; i++) {
